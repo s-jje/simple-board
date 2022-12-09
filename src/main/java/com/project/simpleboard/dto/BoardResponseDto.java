@@ -1,9 +1,15 @@
 package com.project.simpleboard.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-public class BoardDto {
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class BoardResponseDto {
 
     private Long id;
 
