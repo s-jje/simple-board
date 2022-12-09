@@ -2,12 +2,14 @@ package com.project.simpleboard;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
-public class SimpleboardApplication {
+@EnableJpaAuditing
+public class SimpleBoardApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SimpleboardApplication.class, args);
+        SpringApplication.run(SimpleBoardApplication.class, args);
     }
 
 }
