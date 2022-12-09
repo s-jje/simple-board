@@ -1,50 +1,59 @@
 package com.project.simpleboard.service;
 
 import com.project.simpleboard.domain.Board;
-import com.project.simpleboard.dto.BoardDto;
-import com.project.simpleboard.repository.DbBoardRepository;
+import com.project.simpleboard.dto.BoardRequestDto;
+import com.project.simpleboard.dto.BoardResponseDto;
+import com.project.simpleboard.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class BoardService {
+public class BoardServiceImpl implements BoardService {
 
-    private final DbBoardRepository boardRepository;
+    private final BoardRepository boardRepository;
 
     @Transactional
-    public Board register(BoardDto boardDto) {
-        Board board = new Board(boardDto);
+    public BoardResponseDto register(BoardRequestDto boardRequestDto) {
+        Board board = new Board(boardRequestDto);
         boardRepository.save(board);
-        return board;
+        return board.toResponseDto();
     }
 
     @Transactional(readOnly = true)
-    public Board getBoard(Long id) {
-        Optional<Board> board = boardRepository.findBoardById(id);
-        return board.get();
+    public BoardResponseDto findBoard(Long id) {
+        return boardRepository.findBoardById(id).orElseThrow(() -> new NoSuchElementException("Not found.")).toResponseDto();
     }
 
     @Transactional(readOnly = true)
-    public List<Board> getBoards() {
-        return boardRepository.findAllByOrderByCreatedAtDesc();
+    public List<BoardResponseDto> findBoards() {
+        return boardRepository.findAllByOrderByCreatedAtDesc().stream().map(Board::toResponseDto).collect(Collectors.toList());
     }
 
     @Transactional
-    public Board update(Long id, BoardDto boardDto) {
-        Optional<Board> board = boardRepository.findBoardById(id);
-        board.ifPresent(board1 -> {
-            boardRepository.save()
-        });
+    public BoardResponseDto update(Long id, String password, BoardRequestDto boardRequestDto) {
+        Board board = boardRepository.findBoardById(id).orElseThrow(() -> new NoSuchElementException("Not found."));
+        if (password.equals(board.getPassword())) {
+            board.update(boardRequestDto);
+            return board.toResponseDto();
+        } else {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
     }
 
     @Transactional
-    public Long delete(Long id) {
-        boardRepository.deleteById(id);
-        return id;
+    public Long delete(Long id, String password) {
+        Board board = boardRepository.findBoardById(id).orElseThrow(() -> new NoSuchElementException("Not found."));
+        if (password.equals(board.getPassword())) {
+            boardRepository.deleteById(id);
+            return id;
+        } else {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
     }
 }
