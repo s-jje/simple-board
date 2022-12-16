@@ -2,7 +2,10 @@ package com.project.simpleboard.controller;
 
 import com.project.simpleboard.dto.BoardRequestDto;
 import com.project.simpleboard.dto.BoardResponseDto;
+import com.project.simpleboard.dto.LoginRequestDto;
+import com.project.simpleboard.dto.SignUpRequestDto;
 import com.project.simpleboard.service.BoardService;
+import com.project.simpleboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 public class BoardController {
 
+    private final UserService userService;
     private final BoardService boardService;
 
     @GetMapping("/")
@@ -41,5 +45,17 @@ public class BoardController {
     @DeleteMapping("/boards/{id}")
     public void deleteBoard(@PathVariable("id") Long id, @RequestParam("password") String password) {
         boardService.delete(id, password);
+    }
+
+    @PostMapping("/auth/signup")
+    public String signUp(SignUpRequestDto signupRequestDto) {
+        userService.signUp(signupRequestDto);
+        return "redirect:/api/user/login";
+    }
+
+    @PostMapping("/auth/login")
+    public String login(LoginRequestDto loginRequestDto) {
+        userService.login(loginRequestDto);
+        return "redirect:/api/boards";
     }
 }
