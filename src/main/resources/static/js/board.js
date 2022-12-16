@@ -56,7 +56,7 @@ function update_board(id) {
 
     $.ajax({
         type: "PUT",
-        url: `/posts/${id}`,
+        url: `/boards/${id}`,
         contentType: "application/json",
         data: JSON.stringify(data),
         dataType: 'json',
