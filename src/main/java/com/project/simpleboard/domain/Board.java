@@ -20,17 +20,14 @@ public class Board {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String title;
 
-//    @Column(nullable = false)
-    private String author;
-
-//    @Column(nullable = false)
-    private String password;
-
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String content;
+
+    @Column(nullable = false)
+    private String username;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -38,21 +35,23 @@ public class Board {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
-    public Board(BoardRequestDto boardRequestDto) {
+    @Column(nullable = false)
+    private Long userId;
+
+    public Board(BoardRequestDto boardRequestDto, String username, Long userId) {
         this.title = boardRequestDto.getTitle();
-        this.author = boardRequestDto.getAuthor();
-        this.password = boardRequestDto.getPassword();
         this.content = boardRequestDto.getContent();
+        this.username = username;
+        this.userId = userId;
     }
 
     public BoardResponseDto toResponseDto() {
-        return new BoardResponseDto(this.getId().longValue(), this.getTitle(), this.getAuthor(), this.getPassword(), this.getContent(), this.getCreatedAt().toString(), this.getModifiedAt().toString());
+        return new BoardResponseDto(this.getId(), this.getUsername(), this.getTitle(), this.getContent(), this.getCreatedAt().toString(), this.getModifiedAt().toString());
     }
 
     public void update(BoardRequestDto boardRequestDto) {
         this.title = boardRequestDto.getTitle();
-        this.author = boardRequestDto.getAuthor();
-        this.password = boardRequestDto.getPassword();
         this.content = boardRequestDto.getContent();
     }
+
 }
