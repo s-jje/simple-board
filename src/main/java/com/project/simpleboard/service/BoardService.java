@@ -1,19 +1,22 @@
 package com.project.simpleboard.service;
 
+import com.project.simpleboard.dto.BoardDeleteResponseDto;
 import com.project.simpleboard.dto.BoardRequestDto;
 import com.project.simpleboard.dto.BoardResponseDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface BoardService {
 
-    BoardResponseDto register(BoardRequestDto boardRequestDto);
+    BoardResponseDto register(BoardRequestDto boardRequestDto, HttpServletRequest request);
 
-    BoardResponseDto findBoard(Long id);
+    BoardResponseDto getBoard(Long id);
 
-    List<BoardResponseDto> findBoards();
+    List<BoardResponseDto> getBoards();
 
-    BoardResponseDto update(Long id, String password, BoardRequestDto boardRequestDto);
+    BoardResponseDto update(Long id, BoardRequestDto requestDto, HttpServletRequest request);
 
-    Long delete(Long id, String password);
+    BoardDeleteResponseDto delete(Long id, HttpServletRequest request);
+
 }
