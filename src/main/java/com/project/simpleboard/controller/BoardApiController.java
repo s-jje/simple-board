@@ -6,24 +6,20 @@ import com.project.simpleboard.dto.BoardResponseDto;
 import com.project.simpleboard.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
-public class BoardViewController {
+public class BoardApiController {
 
     private final BoardService boardService;
 
-    @GetMapping("/")
-    public ModelAndView home() {
-        return new ModelAndView("index", "boards", boardService.getBoards());
-    }
-
     @GetMapping("/boards")
-    public ModelAndView registerPage() {
-        return new ModelAndView("board");
+    public List<BoardResponseDto> registerPage() {
+        return boardService.getBoards();
     }
 
     @PostMapping("/boards")
@@ -32,8 +28,8 @@ public class BoardViewController {
     }
 
     @GetMapping("/boards/{id}")
-    public ModelAndView showBoard(@PathVariable("id") Long id, HttpServletRequest request) {
-        return new ModelAndView("content", "board", boardService.getBoard(id));
+    public BoardResponseDto getBoard(@PathVariable("id") Long id) {
+        return boardService.getBoard(id);
     }
 
     @PutMapping("/boards/{id}")
