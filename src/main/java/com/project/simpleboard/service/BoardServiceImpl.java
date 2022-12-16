@@ -87,7 +87,6 @@ public class BoardServiceImpl implements BoardService {
         }
     }
 
-
     @Transactional
     public BoardDeleteResponseDto delete(Long id, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
