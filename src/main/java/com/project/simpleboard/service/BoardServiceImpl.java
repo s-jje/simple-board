@@ -5,6 +5,7 @@ import com.project.simpleboard.domain.User;
 import com.project.simpleboard.dto.BoardDeleteResponseDto;
 import com.project.simpleboard.dto.BoardRequestDto;
 import com.project.simpleboard.dto.BoardResponseDto;
+import com.project.simpleboard.exception.UnauthorizedBehaviorException;
 import com.project.simpleboard.repository.BoardRepository;
 import com.project.simpleboard.repository.UserRepository;
 import com.project.simpleboard.util.JwtUtil;
@@ -42,7 +43,7 @@ public class BoardServiceImpl implements BoardService {
                 throw new IllegalArgumentException("Token Error");
             }
 
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
             Board board = boardRepository.saveAndFlush(new Board(requestDto, user.getUsername(), user.getId()));
 
             return new BoardResponseDto(board);
@@ -80,7 +81,7 @@ public class BoardServiceImpl implements BoardService {
                 board.update(requestDto);
                 return board.toResponseDto();
             } else {
-                throw new BadCredentialsException("작성자가 아닙니다.");
+                throw new UnauthorizedBehaviorException("작성자만 수정할 수 있습니다.");
             }
         } else {
             throw new AuthenticationCredentialsNotFoundException("Null token");
@@ -106,7 +107,7 @@ public class BoardServiceImpl implements BoardService {
                 boardRepository.deleteById(id);
                 return new BoardDeleteResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
             } else {
-                throw new BadCredentialsException("작성자가 아닙니다.");
+                throw new UnauthorizedBehaviorException("작성자만 삭제할 수 있습니다.");
             }
         } else {
             throw new AuthenticationCredentialsNotFoundException("Null token");
