@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardResponse {
+public class BoardResponseDto {
 
     private Long id;
     private String title;
@@ -17,7 +17,7 @@ public class BoardResponse {
     private String createdAt;
     private String modifiedAt;
 
-    public BoardResponse(Board board) {
+    public BoardResponseDto(Board board) {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();

@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardRequestDto {
+public class LoginResponseDto {
 
-    private String title;
-    private String content;
+    private String msg;
+    private int statusCode;
 
 }
