@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class AdviceExceptionHandler {
 
-    @ExceptionHandler({Exception.class})
+    @ExceptionHandler(Exception.class)
     public ExceptionResponse handleException(Exception e) {
         return new ExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
@@ -17,4 +17,5 @@ public class AdviceExceptionHandler {
     public ExceptionResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         return new ExceptionResponse(e.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST.value());
     }
+
 }

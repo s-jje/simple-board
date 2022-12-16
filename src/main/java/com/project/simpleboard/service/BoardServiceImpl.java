@@ -11,6 +11,9 @@ import com.project.simpleboard.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +47,7 @@ public class BoardServiceImpl implements BoardService {
 
             return new BoardResponseDto(board);
         } else {
-            return null;
+            throw new AuthenticationCredentialsNotFoundException("Null token");
         }
     }
 
@@ -70,17 +73,17 @@ public class BoardServiceImpl implements BoardService {
                 throw new IllegalArgumentException("Token Error");
             }
 
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
             Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
 
             if (user.getId().longValue() == board.getUserId().longValue()) {
                 board.update(requestDto);
                 return board.toResponseDto();
             } else {
-                throw new IllegalArgumentException("작성자가 아닙니다.");
+                throw new BadCredentialsException("작성자가 아닙니다.");
             }
         } else {
-            return null;
+            throw new AuthenticationCredentialsNotFoundException("Null token");
         }
     }
 
@@ -97,17 +100,17 @@ public class BoardServiceImpl implements BoardService {
                 throw new IllegalArgumentException("Token Error");
             }
 
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
             Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
 
             if (user.getId().longValue() == board.getUserId().longValue()) {
                 boardRepository.deleteById(id);
                 return new BoardDeleteResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
             } else {
-                return new BoardDeleteResponseDto("작성자가 아닙니다.", HttpStatus.BAD_REQUEST.value());
+                throw new BadCredentialsException("작성자가 아닙니다.");
             }
         } else {
-            return null;
+            throw new AuthenticationCredentialsNotFoundException("Null token");
         }
     }
 
