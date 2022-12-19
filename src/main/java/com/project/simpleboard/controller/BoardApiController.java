@@ -32,7 +32,7 @@ public class BoardApiController {
         return boardService.getBoard(id);
     }
 
-    @PutMapping("/boards/{id}")
+    @PatchMapping("/boards/{id}")
     public BoardResponseDto updateBoard(@PathVariable("id") Long id, @RequestBody BoardRequestDto boardRequestDto, HttpServletRequest request) {
         return boardService.update(id, boardRequestDto, request);
     }

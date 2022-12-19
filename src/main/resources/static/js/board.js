@@ -55,7 +55,7 @@ function update_board(id) {
     let data = {'title': title, 'author': author, 'password': password, 'content': content};
 
     $.ajax({
-        type: "PUT",
+        type: "PATCH",
         url: `/boards/${id}`,
         contentType: "application/json",
         data: JSON.stringify(data),
