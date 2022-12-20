@@ -5,9 +5,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Entity
 @Getter
 @NoArgsConstructor
-@Entity
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,14 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    public boolean isValidId(Long id) {
+        return this.id.equals(id);
+    }
+
+    public boolean isValidPassword(String password) {
+        return this.password.equals(password);
     }
 
 }

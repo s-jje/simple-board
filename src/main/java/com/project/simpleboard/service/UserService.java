@@ -53,13 +53,10 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
-        String username = loginRequestDto.getUsername();
-        String password = loginRequestDto.getPassword();
+        User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException("등록된 사용자가 없습니다."));
 
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("등록된 사용자가 없습니다."));
-
-        if(!user.getPassword().equals(password)){
-            throw  new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+        if (!user.isValidPassword(loginRequestDto.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));

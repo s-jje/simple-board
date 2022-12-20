@@ -13,7 +13,6 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +26,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
 
-    private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
     private final JwtUtil jwtUtil;
 
     @Transactional
@@ -37,7 +36,7 @@ public class BoardServiceImpl implements BoardService {
         Claims claims;
 
         if (token != null) {
-            if (jwtUtil.validateToken(token)) {
+            if (jwtUtil.isValidToken(token)) {
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
                 throw new IllegalArgumentException("Token Error");
@@ -54,12 +53,12 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardResponseDto getBoard(Long id) {
-        return boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다.")).toResponseDto();
+        return boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다.")).convertToResponseDto();
     }
 
     @Override
     public List<BoardResponseDto> getBoards() {
-        return boardRepository.findAllByOrderByCreatedAtDesc().stream().map(Board::toResponseDto).collect(Collectors.toList());
+        return boardRepository.findAllByOrderByCreatedAtDesc().stream().map(Board::convertToResponseDto).collect(Collectors.toList());
     }
 
     @Transactional
@@ -68,7 +67,7 @@ public class BoardServiceImpl implements BoardService {
         Claims claims;
 
         if (token != null) {
-            if (jwtUtil.validateToken(token)) {
+            if (jwtUtil.isValidToken(token)) {
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
                 throw new IllegalArgumentException("Token Error");
@@ -77,9 +76,9 @@ public class BoardServiceImpl implements BoardService {
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
             Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
 
-            if (user.getId().longValue() == board.getUserId().longValue()) {
+            if (user.isValidId(board.getUserId())) {
                 board.update(requestDto);
-                return board.toResponseDto();
+                return board.convertToResponseDto();
             } else {
                 throw new UnauthorizedBehaviorException("작성자만 수정할 수 있습니다.");
             }
@@ -94,7 +93,7 @@ public class BoardServiceImpl implements BoardService {
         Claims claims;
 
         if (token != null) {
-            if (jwtUtil.validateToken(token)) {
+            if (jwtUtil.isValidToken(token)) {
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
                 throw new IllegalArgumentException("Token Error");
@@ -103,7 +102,7 @@ public class BoardServiceImpl implements BoardService {
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
             Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
 
-            if (user.getId().longValue() == board.getUserId().longValue()) {
+            if (user.isValidId(board.getUserId())) {
                 boardRepository.deleteById(id);
                 return new BoardDeleteResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
             } else {
