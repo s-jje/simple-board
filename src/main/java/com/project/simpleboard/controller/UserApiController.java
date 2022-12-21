@@ -3,7 +3,7 @@ package com.project.simpleboard.controller;
 import com.project.simpleboard.domain.User;
 import com.project.simpleboard.dto.LoginRequestDto;
 import com.project.simpleboard.dto.SignUpRequestDto;
-import com.project.simpleboard.service.UserServiceImpl;
+import com.project.simpleboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,22 +16,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserApiController {
 
-    private final UserServiceImpl userServiceImpl;
+    private final UserService userService;
 
     @GetMapping("/users")
     public List<User> getUsers() {
-        return userServiceImpl.getUsers();
+        return userService.getUsers();
     }
 
     @PostMapping("/signup")
     public String signUp(@RequestBody @Valid SignUpRequestDto signupRequestDto) {
-        userServiceImpl.signUp(signupRequestDto);
+        userService.signUp(signupRequestDto);
         return "회원가입 성공";
     }
 
     @PostMapping("/login")
     public String login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
-        userServiceImpl.login(loginRequestDto, response);
+        userService.login(loginRequestDto, response);
         return "로그인 성공";
     }
 

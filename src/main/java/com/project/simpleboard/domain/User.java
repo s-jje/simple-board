@@ -37,4 +37,8 @@ public class User {
         return this.password.equals(password);
     }
 
+    public boolean isAdmin() {
+        return role == UserRoleEnum.ADMIN;
+    }
+
 }

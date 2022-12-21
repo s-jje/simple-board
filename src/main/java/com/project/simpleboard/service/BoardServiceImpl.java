@@ -60,7 +60,7 @@ public class BoardServiceImpl implements BoardService {
         User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
         Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
 
-        if (user.isValidId(board.getUserId())) {
+        if (user.isAdmin() || user.isValidId(board.getUserId())) {
             board.update(boardRequestDto);
             return board.convertToResponseDto();
         } else {
@@ -76,7 +76,7 @@ public class BoardServiceImpl implements BoardService {
         User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
         Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
 
-        if (user.isValidId(board.getUserId())) {
+        if (user.isAdmin() || user.isValidId(board.getUserId())) {
             boardRepository.deleteById(id);
             return new StatusResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
         } else {

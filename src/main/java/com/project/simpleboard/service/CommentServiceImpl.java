@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("해당 댓글은 존재하지 않습니다."));
 
-        if (user.isValidId(comment.getUserId())) {
+        if (user.isAdmin() || user.isValidId(comment.getUserId())) {
             comment.update(commentRequestDto);
             return comment.convertToResponseDto();
         } else {
@@ -68,7 +68,7 @@ public class CommentServiceImpl implements CommentService {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("해당 댓글은 존재하지 않습니다."));
 
-        if (user.isValidId(comment.getUserId())) {
+        if (user.isAdmin() || user.isValidId(comment.getUserId())) {
             commentRepository.deleteById(commentId);
             return new StatusResponseDto("댓글 삭제 성공", HttpStatus.OK.value());
         } else {
