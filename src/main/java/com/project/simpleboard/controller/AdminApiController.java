@@ -12,13 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminApiController {
 
     private final UserService userService;
 
-    @PostMapping("/admin/signup")
+    @PostMapping("/auth/signup")
     public String signUp(@RequestBody @Valid SignUpRequestDto signupRequestDto, HttpServletRequest request) {
         signupRequestDto.adminSignUp(request.getHeader("Authorization"));
         userService.signUp(signupRequestDto);
