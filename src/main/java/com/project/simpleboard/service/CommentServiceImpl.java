@@ -1,12 +1,14 @@
 package com.project.simpleboard.service;
 
 import com.project.simpleboard.domain.Board;
+import com.project.simpleboard.domain.Comment;
 import com.project.simpleboard.domain.User;
-import com.project.simpleboard.dto.BoardRequestDto;
-import com.project.simpleboard.dto.BoardResponseDto;
+import com.project.simpleboard.dto.CommentRequestDto;
+import com.project.simpleboard.dto.CommentResponseDto;
 import com.project.simpleboard.dto.StatusResponseDto;
 import com.project.simpleboard.exception.UnauthorizedBehaviorException;
 import com.project.simpleboard.repository.BoardRepository;
+import com.project.simpleboard.repository.CommentRepository;
 import com.project.simpleboard.repository.UserRepository;
 import com.project.simpleboard.util.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -18,21 +20,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class BoardServiceImpl implements BoardService {
+public class CommentServiceImpl implements CommentService {
 
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
 
     @Transactional
     @Override
-    public BoardResponseDto register(BoardRequestDto boardRequestDto, HttpServletRequest request) {
+    public CommentResponseDto register(Long boardId, CommentRequestDto commentRequestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -44,29 +45,18 @@ public class BoardServiceImpl implements BoardService {
             }
 
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
-            Board board = boardRepository.saveAndFlush(new Board(boardRequestDto, user.getUsername(), user.getId()));
+            Board board = boardRepository.findById(boardId).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
+            Comment comment = commentRepository.saveAndFlush(new Comment(commentRequestDto, user.getUsername(), user.getId(), board));
 
-            return new BoardResponseDto(board);
+            return new CommentResponseDto(comment);
         } else {
             throw new AuthenticationCredentialsNotFoundException("토큰이 유효하지 않습니다.");
         }
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public BoardResponseDto getBoard(Long id) {
-        return boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다.")).convertToResponseDto();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<BoardResponseDto> getBoards() {
-        return boardRepository.findAllByOrderByCreatedAtDesc().stream().map(Board::convertToResponseDto).collect(Collectors.toList());
-    }
-
     @Transactional
     @Override
-    public BoardResponseDto update(Long id, BoardRequestDto boardRequestDto, HttpServletRequest request) {
+    public CommentResponseDto update(Long boardId, Long commentId, CommentRequestDto commentRequestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -78,11 +68,12 @@ public class BoardServiceImpl implements BoardService {
             }
 
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
-            Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
+            Board board = boardRepository.findById(boardId).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
+            Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("해당 댓글은 존재하지 않습니다."));
 
-            if (user.isValidId(board.getUserId())) {
-                board.update(boardRequestDto);
-                return board.convertToResponseDto();
+            if (user.isValidId(comment.getUserId())) {
+                comment.update(commentRequestDto);
+                return comment.convertToResponseDto();
             } else {
                 throw new UnauthorizedBehaviorException("작성자만 수정할 수 있습니다.");
             }
@@ -93,7 +84,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public StatusResponseDto delete(Long id, HttpServletRequest request) {
+    public StatusResponseDto delete(Long boardId, Long commentId, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -105,11 +96,12 @@ public class BoardServiceImpl implements BoardService {
             }
 
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
-            Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
+            Board board = boardRepository.findById(boardId).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
+            Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("해당 댓글은 존재하지 않습니다."));
 
-            if (user.isValidId(board.getUserId())) {
-                boardRepository.deleteById(id);
-                return new StatusResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
+            if (user.isValidId(comment.getUserId())) {
+                commentRepository.deleteById(commentId);
+                return new StatusResponseDto("댓글 삭제 성공", HttpStatus.OK.value());
             } else {
                 throw new UnauthorizedBehaviorException("작성자만 삭제할 수 있습니다.");
             }

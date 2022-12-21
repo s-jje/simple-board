@@ -18,18 +18,20 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserServiceImpl implements UserService {
 
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
     @Transactional(readOnly = true)
+    @Override
     public List<User> getUsers() {
         return userRepository.findAll();
     }
 
     @Transactional
+    @Override
     public void signUp(SignUpRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
         String password = signupRequestDto.getPassword();
@@ -52,6 +54,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @Override
     public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException("등록된 사용자가 없습니다."));
 
