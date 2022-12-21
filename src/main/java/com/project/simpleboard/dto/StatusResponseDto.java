@@ -1,13 +1,11 @@
-package com.project.simpleboard.exception;
+package com.project.simpleboard.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @RequiredArgsConstructor
-public class ExceptionResponse {
+public class StatusResponseDto {
 
     private final String msg;
     private final int statusCode;

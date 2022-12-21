@@ -1,5 +1,6 @@
 package com.project.simpleboard.exception;
 
+import com.project.simpleboard.dto.StatusResponseDto;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -16,29 +17,29 @@ import java.util.NoSuchElementException;
 public class AdviceExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ExceptionResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return new ExceptionResponse(e.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST.value());
+    public StatusResponseDto handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        return new StatusResponseDto(e.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
     @ExceptionHandler({SecurityException.class, MalformedJwtException.class, ExpiredJwtException.class,
             UnsupportedJwtException.class, IllegalArgumentException.class, BadCredentialsException.class})
-    public ExceptionResponse handleUnauthorized(Exception e) {
-        return new ExceptionResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
+    public StatusResponseDto handleUnauthorized(Exception e) {
+        return new StatusResponseDto(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
     }
 
     @ExceptionHandler(UnauthorizedBehaviorException.class)
-    public ExceptionResponse handleForbidden(UnauthorizedBehaviorException e) {
-        return new ExceptionResponse(e.getMessage(), HttpStatus.FORBIDDEN.value());
+    public StatusResponseDto handleForbidden(UnauthorizedBehaviorException e) {
+        return new StatusResponseDto(e.getMessage(), HttpStatus.FORBIDDEN.value());
     }
 
     @ExceptionHandler({NoSuchElementException.class, UsernameNotFoundException.class})
-    public ExceptionResponse handleNotFound(Exception e) {
-        return new ExceptionResponse(e.getMessage(), HttpStatus.NOT_FOUND.value());
+    public StatusResponseDto handleNotFound(Exception e) {
+        return new StatusResponseDto(e.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
     @ExceptionHandler(Exception.class)
-    public ExceptionResponse handleInternalServerError(Exception e) {
-        return new ExceptionResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+    public StatusResponseDto handleInternalServerError(Exception e) {
+        return new StatusResponseDto(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
 }

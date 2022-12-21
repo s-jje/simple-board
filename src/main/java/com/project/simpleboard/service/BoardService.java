@@ -1,8 +1,8 @@
 package com.project.simpleboard.service;
 
-import com.project.simpleboard.dto.BoardDeleteResponseDto;
 import com.project.simpleboard.dto.BoardRequestDto;
 import com.project.simpleboard.dto.BoardResponseDto;
+import com.project.simpleboard.dto.StatusResponseDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -17,6 +17,6 @@ public interface BoardService {
 
     BoardResponseDto update(Long id, BoardRequestDto requestDto, HttpServletRequest request);
 
-    BoardDeleteResponseDto delete(Long id, HttpServletRequest request);
+    StatusResponseDto delete(Long id, HttpServletRequest request);
 
 }

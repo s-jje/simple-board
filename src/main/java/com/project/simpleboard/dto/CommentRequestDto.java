@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponseDto {
+public class CommentRequestDto {
 
-    private String msg;
-    private int statusCode;
+    private String content;
 
 }

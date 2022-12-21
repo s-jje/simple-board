@@ -2,12 +2,10 @@ package com.project.simpleboard.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.Pattern;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class SignUpRequestDto {
 
@@ -20,5 +18,10 @@ public class SignUpRequestDto {
     private boolean admin = false;
 
     private String adminToken = "";
+
+    public void adminSignUp(String adminToken) {
+        this.admin = true;
+        this.adminToken = adminToken;
+    }
 
 }

@@ -1,8 +1,8 @@
 package com.project.simpleboard.controller;
 
-import com.project.simpleboard.dto.BoardDeleteResponseDto;
 import com.project.simpleboard.dto.BoardRequestDto;
 import com.project.simpleboard.dto.BoardResponseDto;
+import com.project.simpleboard.dto.StatusResponseDto;
 import com.project.simpleboard.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +42,7 @@ public class BoardViewController {
     }
 
     @DeleteMapping("/boards/{id}")
-    public BoardDeleteResponseDto deleteBoard(@PathVariable("id") Long id, HttpServletRequest request) {
+    public StatusResponseDto deleteBoard(@PathVariable("id") Long id, HttpServletRequest request) {
         return boardService.delete(id, request);
     }
 

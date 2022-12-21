@@ -1,8 +1,8 @@
 package com.project.simpleboard.controller;
 
-import com.project.simpleboard.dto.BoardDeleteResponseDto;
 import com.project.simpleboard.dto.BoardRequestDto;
 import com.project.simpleboard.dto.BoardResponseDto;
+import com.project.simpleboard.dto.StatusResponseDto;
 import com.project.simpleboard.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,7 @@ public class BoardApiController {
     }
 
     @PostMapping("/boards")
-    public BoardResponseDto register(@RequestBody BoardRequestDto boardRequestDto, HttpServletRequest request) {
+    public BoardResponseDto registerBoard(@RequestBody BoardRequestDto boardRequestDto, HttpServletRequest request) {
         return boardService.register(new BoardRequestDto(boardRequestDto.getTitle(), boardRequestDto.getContent()), request);
     }
 
@@ -38,7 +38,7 @@ public class BoardApiController {
     }
 
     @DeleteMapping("/boards/{id}")
-    public BoardDeleteResponseDto deleteBoard(@PathVariable("id") Long id, HttpServletRequest request) {
+    public StatusResponseDto deleteBoard(@PathVariable("id") Long id, HttpServletRequest request) {
         return boardService.delete(id, request);
     }
 
