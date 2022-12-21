@@ -31,7 +31,7 @@ public class Board extends TimeStamped {
     @NotNull
     private Long userId;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final List<Comment> commentList = new ArrayList<>();
 
     public Board(BoardRequestDto boardRequestDto, String username, Long userId) {

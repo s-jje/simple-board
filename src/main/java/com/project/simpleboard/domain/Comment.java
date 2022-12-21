@@ -25,7 +25,7 @@ public class Comment extends TimeStamped {
     @NotNull
     private Long userId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Board board;
 
     public Comment(CommentRequestDto commentRequestDto, String username, Long userId, Board board) {
