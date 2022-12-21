@@ -12,7 +12,6 @@ import com.project.simpleboard.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,23 +32,12 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     @Override
     public BoardResponseDto register(BoardRequestDto boardRequestDto, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+        Claims claims = jwtUtil.getValidClaims(request);
 
-        if (token != null) {
-            if (jwtUtil.isValidToken(token)) {
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
-            }
+        User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
+        Board board = boardRepository.saveAndFlush(new Board(boardRequestDto, user.getUsername(), user.getId()));
 
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
-            Board board = boardRepository.saveAndFlush(new Board(boardRequestDto, user.getUsername(), user.getId()));
-
-            return new BoardResponseDto(board);
-        } else {
-            throw new AuthenticationCredentialsNotFoundException("토큰이 유효하지 않습니다.");
-        }
+        return new BoardResponseDto(board);
     }
 
     @Transactional(readOnly = true)
@@ -67,54 +55,32 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     @Override
     public BoardResponseDto update(Long id, BoardRequestDto boardRequestDto, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+        Claims claims = jwtUtil.getValidClaims(request);
 
-        if (token != null) {
-            if (jwtUtil.isValidToken(token)) {
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
-            }
+        User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
+        Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
 
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
-            Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
-
-            if (user.isValidId(board.getUserId())) {
-                board.update(boardRequestDto);
-                return board.convertToResponseDto();
-            } else {
-                throw new UnauthorizedBehaviorException("작성자만 수정할 수 있습니다.");
-            }
+        if (user.isValidId(board.getUserId())) {
+            board.update(boardRequestDto);
+            return board.convertToResponseDto();
         } else {
-            throw new AuthenticationCredentialsNotFoundException("토큰이 유효하지 않습니다.");
+            throw new UnauthorizedBehaviorException("작성자만 수정할 수 있습니다.");
         }
     }
 
     @Transactional
     @Override
     public StatusResponseDto delete(Long id, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+        Claims claims = jwtUtil.getValidClaims(request);
 
-        if (token != null) {
-            if (jwtUtil.isValidToken(token)) {
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
-            }
+        User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
+        Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
 
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
-            Board board = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다."));
-
-            if (user.isValidId(board.getUserId())) {
-                boardRepository.deleteById(id);
-                return new StatusResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
-            } else {
-                throw new UnauthorizedBehaviorException("작성자만 삭제할 수 있습니다.");
-            }
+        if (user.isValidId(board.getUserId())) {
+            boardRepository.deleteById(id);
+            return new StatusResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
         } else {
-            throw new AuthenticationCredentialsNotFoundException("토큰이 유효하지 않습니다.");
+            throw new UnauthorizedBehaviorException("작성자만 삭제할 수 있습니다.");
         }
     }
 
