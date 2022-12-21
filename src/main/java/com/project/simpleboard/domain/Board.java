@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -27,6 +30,9 @@ public class Board extends TimeStamped {
     @Column(nullable = false)
     private Long userId;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private final List<Comment> commentList = new ArrayList<>();
+
     public Board(BoardRequestDto boardRequestDto, String username, Long userId) {
         this.title = boardRequestDto.getTitle();
         this.content = boardRequestDto.getContent();
@@ -35,7 +41,7 @@ public class Board extends TimeStamped {
     }
 
     public BoardResponseDto convertToResponseDto() {
-        return new BoardResponseDto(this.getId(), this.getUsername(), this.getTitle(), this.getContent(), this.getCreatedAt().toString(), this.getModifiedAt().toString());
+        return new BoardResponseDto(id, username, title, content, getCreatedAt().toString(), getModifiedAt().toString(), commentList.stream().map(Comment::convertToResponseDto).collect(Collectors.toList()));
     }
 
     public void update(BoardRequestDto boardRequestDto) {
