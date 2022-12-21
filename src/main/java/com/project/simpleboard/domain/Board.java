@@ -41,8 +41,8 @@ public class Board extends TimeStamped {
         this.userId = userId;
     }
 
-    public BoardResponseDto convertToResponseDto() {
-        return new BoardResponseDto(id, username, title, content, getCreatedAt().toString(), getModifiedAt().toString(), commentList.stream().map(Comment::convertToResponseDto).collect(Collectors.toList()));
+    public BoardResponseDto toResponseDto() {
+        return new BoardResponseDto(id, username, title, content, getCreatedAt().toString(), getModifiedAt().toString(), commentList.stream().map(Comment::toResponseDto).collect(Collectors.toList()));
     }
 
     public void update(BoardRequestDto boardRequestDto) {

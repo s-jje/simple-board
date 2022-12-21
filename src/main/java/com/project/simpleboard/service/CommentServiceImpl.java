@@ -53,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
 
         if (user.isAdmin() || user.isValidId(comment.getUserId())) {
             comment.update(commentRequestDto);
-            return comment.convertToResponseDto();
+            return comment.toResponseDto();
         } else {
             throw new UnauthorizedBehaviorException("작성자만 수정할 수 있습니다.");
         }

@@ -43,13 +43,13 @@ public class BoardServiceImpl implements BoardService {
     @Transactional(readOnly = true)
     @Override
     public BoardResponseDto getBoard(Long id) {
-        return boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다.")).convertToResponseDto();
+        return boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글은 존재하지 않습니다.")).toResponseDto();
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<BoardResponseDto> getBoards() {
-        return boardRepository.findAllByOrderByCreatedAtDesc().stream().map(Board::convertToResponseDto).collect(Collectors.toList());
+        return boardRepository.findAllByOrderByCreatedAtDesc().stream().map(Board::toResponseDto).collect(Collectors.toList());
     }
 
     @Transactional
@@ -62,7 +62,7 @@ public class BoardServiceImpl implements BoardService {
 
         if (user.isAdmin() || user.isValidId(board.getUserId())) {
             board.update(boardRequestDto);
-            return board.convertToResponseDto();
+            return board.toResponseDto();
         } else {
             throw new UnauthorizedBehaviorException("작성자만 수정할 수 있습니다.");
         }

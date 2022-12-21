@@ -35,7 +35,7 @@ public class Comment extends TimeStamped {
         this.board = board;
     }
 
-    public CommentResponseDto convertToResponseDto() {
+    public CommentResponseDto toResponseDto() {
         return new CommentResponseDto(id, content, username, getCreatedAt().toString(), getModifiedAt().toString());
     }
 

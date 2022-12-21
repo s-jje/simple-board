@@ -29,7 +29,7 @@ public class BoardResponseDto {
         this.username = board.getUsername();
         this.createdAt = board.getCreatedAt().toString();
         this.modifiedAt = board.getModifiedAt().toString();
-        this.commentResponseDtoList = board.getCommentList().stream().map(Comment::convertToResponseDto).collect(Collectors.toList());
+        this.commentResponseDtoList = board.getCommentList().stream().map(Comment::toResponseDto).collect(Collectors.toList());
     }
 
 }
