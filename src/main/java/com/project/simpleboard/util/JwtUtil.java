@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -75,6 +76,20 @@ public class JwtUtil {
 
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    public Claims getValidClaims(HttpServletRequest request) {
+        String token = resolveToken(request);
+
+        if (token != null) {
+            if (isValidToken(token)) {
+                return getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
+            }
+        } else {
+            throw new AuthenticationCredentialsNotFoundException("토큰이 유효하지 않습니다.");
+        }
     }
 
 }
