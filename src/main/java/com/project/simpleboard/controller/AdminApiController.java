@@ -18,7 +18,7 @@ public class AdminApiController {
 
     private final UserService userService;
 
-    @PostMapping("/auth/signup")
+    @PostMapping("/auth/sign-up")
     public String signUp(@RequestBody @Valid SignUpRequestDto signupRequestDto, HttpServletRequest request) {
         signupRequestDto.adminSignUp(request.getHeader("Authorization"));
         userService.signUp(signupRequestDto);

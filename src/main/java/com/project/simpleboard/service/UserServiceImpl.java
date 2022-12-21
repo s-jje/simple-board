@@ -2,7 +2,7 @@ package com.project.simpleboard.service;
 
 import com.project.simpleboard.domain.User;
 import com.project.simpleboard.domain.UserRoleEnum;
-import com.project.simpleboard.dto.LoginRequestDto;
+import com.project.simpleboard.dto.SignInRequestDto;
 import com.project.simpleboard.dto.SignUpRequestDto;
 import com.project.simpleboard.repository.UserRepository;
 import com.project.simpleboard.util.JwtUtil;
@@ -55,10 +55,10 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
-        User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException("등록된 사용자가 없습니다."));
+    public void signIn(SignInRequestDto signInRequestDto, HttpServletResponse response) {
+        User user = userRepository.findByUsername(signInRequestDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException("등록된 사용자가 없습니다."));
 
-        if (!user.isValidPassword(loginRequestDto.getPassword())) {
+        if (!user.isValidPassword(signInRequestDto.getPassword())) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 

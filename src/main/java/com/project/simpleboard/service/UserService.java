@@ -1,7 +1,7 @@
 package com.project.simpleboard.service;
 
 import com.project.simpleboard.domain.User;
-import com.project.simpleboard.dto.LoginRequestDto;
+import com.project.simpleboard.dto.SignInRequestDto;
 import com.project.simpleboard.dto.SignUpRequestDto;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +13,6 @@ public interface UserService {
 
     void signUp(SignUpRequestDto signupRequestDto);
 
-    void login(LoginRequestDto loginRequestDto, HttpServletResponse response);
+    void signIn(SignInRequestDto signInRequestDto, HttpServletResponse response);
 
 }
