@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -14,12 +15,13 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @NotNull
     private String username;
 
-    @Column(nullable = false)
+    @NotNull
     private String password;
 
-    @Column(nullable = false)
+    @NotNull
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 

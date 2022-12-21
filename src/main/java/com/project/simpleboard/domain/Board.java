@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,16 +19,16 @@ public class Board extends TimeStamped {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull
     private String title;
 
-    @Column(nullable = false)
+    @NotNull
     private String content;
 
-    @Column(nullable = false)
+    @NotNull
     private String username;
 
-    @Column(nullable = false)
+    @NotNull
     private Long userId;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)

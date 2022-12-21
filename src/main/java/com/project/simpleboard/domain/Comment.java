@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -15,10 +16,13 @@ public class Comment extends TimeStamped {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String content;
 
+    @NotNull
     private String username;
 
+    @NotNull
     private Long userId;
 
     @ManyToOne
